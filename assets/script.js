@@ -18,6 +18,8 @@ const tbody = $("tbody");
 const startWork = 9;
 const finishWork = 17;
 
+const currentHour = moment().format("H");
+
 
 for (let i = startWork; i <= finishWork; i++) {
 
@@ -58,9 +60,11 @@ for (let i = startWork; i <= finishWork; i++) {
     tdSave.append(iconSave);
     tdSave.attr("data-save", i);
 
+    tr.attr("data-hour", i);
     tr.append(tdHour, tdTask, tdSave);
 
     tbody.append(tr);
+
 
 }
 
@@ -76,18 +80,27 @@ $(".saveBtn").on("click", function() {
 
     localStorage.setItem("dayTasks", JSON.stringify(dayTasks));
 
+    location.reload();
+
 });
 
 //show current tasks when load.
 if (dayTasks) {
     $.each(dayTasks, function(idx, val) {
         let ctrl = $("[data-hour=" + val.hour + "]");
-        console.log(ctrl);
-
-        let task9Pm = $("input[data-hour='9']");
-
-        task9Pm.val(dayTasks[0].task);
-
+        ctrl.val(val.task);
     })
-
 }
+
+// function to change class according to hour of the day.
+$("tbody > tr").each(function() {
+    let trTime = $(this);
+    console.log(trTime.data("hour"));
+    if (trTime.data("hour") == currentHour) {
+        $(this).addClass("present");
+    } else if (trTime.data("hour") < currentHour) {
+        $(this).addClass("past");
+    } else if (trTime.data("hour") > currentHour) {
+        $(this).addClass("future");
+    }
+})
